@@ -19,16 +19,12 @@ const pool = new Pool({
  * @return {Promise<{}>} A promise to the user.
  */
 const getUserWithEmail = function(email) {
-  let user;
-  for (const userId in users) {
-    user = users[userId];
-    if (user.email.toLowerCase() === email.toLowerCase()) {
-      break;
-    } else {
-      user = null;
-    }
-  }
-  return Promise.resolve(user);
+  const queryString = `
+  SELECT * FROM users
+  WHERE users.email = $1
+  `;
+  const values = [email];
+  return pool.query(queryString, values).then(res => res.rows[0]);
 };
 exports.getUserWithEmail = getUserWithEmail;
 
@@ -38,7 +34,12 @@ exports.getUserWithEmail = getUserWithEmail;
  * @return {Promise<{}>} A promise to the user.
  */
 const getUserWithId = function(id) {
-  return Promise.resolve(users[id]);
+  const queryString = `
+  SELECT * FROM users
+  WHERE users.id = $1
+  `;
+  const values = [id];
+  return pool.query(queryString, values).then(res => res.rows[0]);
 };
 exports.getUserWithId = getUserWithId;
 
@@ -48,10 +49,21 @@ exports.getUserWithId = getUserWithId;
  * @return {Promise<{}>} A promise to the user.
  */
 const addUser = function(user) {
-  const userId = Object.keys(users).length + 1;
-  user.id = userId;
-  users[userId] = user;
-  return Promise.resolve(user);
+  // const userId = Object.keys(users).length + 1;
+  // user.id = userId;
+  // users[userId] = user;
+  // return Promise.resolve(user);
+  // INSERT INTO users(
+  //   name, email, password)
+  // VALUES(
+  //   'Devin Sanders', 'tristanjacobs@gmail.com', '$2a$10$FB/BOAVhpuLvpOREQVmvmezD4ED/.JBIDRh70tGevYzYzQgFId2u.');
+  const queryString = `
+    INSERT INTO users (name, email, password) 
+    VALUES ($1, $2, $3)
+    RETURNING *;
+  `;
+  const values = [user.name, user.email, user.password];
+  return pool.query(queryString, values).then(res => res.rows[0]);
 };
 exports.addUser = addUser;
 
@@ -81,10 +93,7 @@ const getAllProperties = function(options, limit = 10) {
   LIMIT $1
   `;
   const values = [limit];
-  return pool
-    .query(queryString, values)
-    .then(res => res.rows)
-    .catch(err => console.error("query error", err.stack));
+  return pool.query(queryString, values).then(res => res.rows);
 };
 exports.getAllProperties = getAllProperties;
 
