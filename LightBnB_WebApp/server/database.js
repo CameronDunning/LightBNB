@@ -49,14 +49,6 @@ exports.getUserWithId = getUserWithId;
  * @return {Promise<{}>} A promise to the user.
  */
 const addUser = function(user) {
-  // const userId = Object.keys(users).length + 1;
-  // user.id = userId;
-  // users[userId] = user;
-  // return Promise.resolve(user);
-  // INSERT INTO users(
-  //   name, email, password)
-  // VALUES(
-  //   'Devin Sanders', 'tristanjacobs@gmail.com', '$2a$10$FB/BOAVhpuLvpOREQVmvmezD4ED/.JBIDRh70tGevYzYzQgFId2u.');
   const queryString = `
     INSERT INTO users (name, email, password) 
     VALUES ($1, $2, $3)
