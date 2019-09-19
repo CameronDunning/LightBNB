@@ -118,7 +118,6 @@ const getAllProperties = function(options, limit = 10) {
   ORDER BY cost_per_night
   LIMIT $${queryParams.length};
   `;
-  console.log(queryString, queryParams);
   return pool.query(queryString, queryParams).then(res => res.rows);
 };
 exports.getAllProperties = getAllProperties;
@@ -152,7 +151,6 @@ const addProperty = function(property) {
     property.number_of_bedrooms,
     property.owner_id
   ];
-  console.log(queryString, values);
   return pool.query(queryString, values).then(res => res.rows[0]);
 };
 exports.addProperty = addProperty;
